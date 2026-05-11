@@ -5,7 +5,7 @@ import StudyPlanModal from "./components/StudyPlanModal";
 import AddTaskModal from "./components/AddTaskModal";
 import LoginPage from "./components/LoginPage";
 
-const START_DATE = new Date(2026, 4, 10); // May 10 2026
+const START_DATE = new Date(2026, 5, 12); // Jun 12 2026
 
 const topics = [
   { day: 1,  topic: "Arrays – Two Pointers, Sliding Window",        tag: "DSA",  tip: "GoFarm & LeetCode 300+; revise edge cases" },
@@ -295,11 +295,11 @@ export default function App() {
               </div>
               <div style={{ fontSize: 13, color: "#b0b0b0", display: "flex", gap: 12, flexWrap: "wrap", alignItems: "center" }}>
                 <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
-                  � {user.name}
+                  👤 {user.name}
                 </span>
                 <span style={{ color: "#555" }}>•</span>
                 <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
-                  �📅 10 May – 6 Jun 2026
+                  📅 12 Jun – 9 Jul 2026
                 </span>
                 <span style={{ color: "#555" }}>•</span>
                 <span style={{ display: "flex", alignItems: "center", gap: 4 }}>

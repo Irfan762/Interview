@@ -126,7 +126,7 @@ npm run preview
 
 ## 📊 Study Plan Overview
 
-- **28 Days**: May 10 - June 6, 2026
+- **28 Days**: June 12 - July 9, 2026
 - **Subjects**: DSA, Aptitude, CS Fundamentals, English, HR, Mock Tests
 - **Revision Pattern**: Learn (Day 1) → Revise (Day 4) → Master (Day 7)
 - **Total Tasks**: 84 entries (28 topics × 3 phases)
@@ -151,7 +151,7 @@ Update `TAG_COLORS` and `TYPE_CONFIG` in `src/App.jsx`.
 ### Adjust Start Date
 
 ```javascript
-const START_DATE = new Date(2026, 4, 10); // May 10 2026
+const START_DATE = new Date(2026, 5, 12); // June 12 2026
 ```
 
 ## 🚀 Deployment
