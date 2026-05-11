@@ -105,6 +105,75 @@ input:focus-visible {
 /* Smooth transitions */
 * {
   transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   transition-duration: 150ms;
 }
+
+/* --- Mobile Responsiveness --- */
+@media (max-width: 768px) {
+  /* Header */
+  .header-content {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+  }
+  .header-stats-container {
+    text-align: left !important;
+    width: 100%;
+    margin-top: 15px;
+  }
+  .header-progress-bar {
+    width: 100% !important;
+  }
+  
+  /* Filters */
+  .filters-container {
+    gap: 8px !important;
+  }
+  .filters-container button {
+    flex: 1 1 auto;
+    text-align: center;
+  }
+
+  /* Calendar Day Row */
+  .day-row-header {
+    flex-wrap: wrap !important;
+  }
+  .day-row-date {
+    width: 100%;
+    margin-top: 4px;
+    margin-bottom: 4px;
+  }
+  .day-row-progress {
+    flex: 1 1 100% !important;
+    margin-bottom: 8px;
+  }
+  .day-row-actions {
+    flex: 1 1 100% !important;
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+  
+  /* Task Item */
+  .task-item {
+    flex-wrap: wrap !important;
+  }
+  .task-item-content {
+    width: 100% !important;
+    margin-top: 8px;
+    margin-bottom: 8px;
+  }
+  .task-item-badges {
+    display: flex;
+    gap: 8px;
+  }
+
+  /* List View */
+  .list-view-row {
+    flex-wrap: wrap !important;
+  }
+  .list-view-content {
+    width: 100% !important;
+    margin-top: 8px;
+  }
+}
+

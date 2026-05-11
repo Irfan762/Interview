@@ -279,7 +279,7 @@ export default function App() {
         boxShadow: "0 8px 32px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,215,0,0.1)",
       }}>
         <div style={{ maxWidth: 1100, margin: "0 auto" }}>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
+          <div className="header-content" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
             <div>
               <div style={{ 
                 fontSize: 28, 
@@ -342,7 +342,7 @@ export default function App() {
             </div>
 
             {/* Progress */}
-            <div style={{ textAlign: "right" }}>
+            <div className="header-stats-container" style={{ textAlign: "right" }}>
               <div style={{ fontSize: 14, color: "#d0d0d0", marginBottom: 6, fontWeight: "500" }}>
                 <span style={{ 
                   color: "#4CAF50", 
@@ -352,7 +352,7 @@ export default function App() {
                 }}>{doneTasks}</span>
                 <span style={{ color: "#999", fontSize: 13 }}> / {totalTasks} tasks</span>
               </div>
-              <div style={{ 
+              <div className="header-progress-bar" style={{ 
                 width: 240, 
                 height: 12, 
                 background: "rgba(255,255,255,0.05)", 
@@ -388,7 +388,7 @@ export default function App() {
           </div>
 
           {/* Filters */}
-          <div style={{ display: "flex", gap: 8, marginTop: 14, flexWrap: "wrap", alignItems: "center" }}>
+          <div className="filters-container" style={{ display: "flex", gap: 8, marginTop: 14, flexWrap: "wrap", alignItems: "center" }}>
             {/* View toggle */}
             <div style={{ display: "flex", background: "rgba(13, 27, 42, 0.6)", backdropFilter: "blur(5px)", borderRadius: 10, border: "1px solid rgba(255,255,255,0.1)", overflow: "hidden", marginRight: 10, boxShadow: "0 2px 8px rgba(0,0,0,0.3)" }}>
               {["calendar","list"].map(v => (
@@ -495,7 +495,7 @@ export default function App() {
                   transform: isOpen ? "translateY(-2px)" : "none",
                 }}>
                   {/* Day header – clickable to expand */}
-                  <button onClick={() => setActiveDay(isOpen ? null : day)} style={{
+                  <button onClick={() => setActiveDay(isOpen ? null : day)} className="day-row-header" style={{
                     width: "100%", display: "flex", alignItems: "center", gap: 14,
                     padding: "16px 20px", background: "transparent", border: "none",
                     cursor: "pointer", textAlign: "left",
@@ -523,7 +523,7 @@ export default function App() {
                     }}>Day {day}</div>
 
                     {/* Date */}
-                    <div style={{ fontSize: 13, color: "#a0aec0", minWidth: 130, fontWeight: "500" }}>
+                    <div className="day-row-date" style={{ fontSize: 13, color: "#a0aec0", minWidth: 130, fontWeight: "500" }}>
                       📅 {fmtDate(day)} · {fmtDayName(day).slice(0, 3)}
                     </div>
 
@@ -543,7 +543,7 @@ export default function App() {
                     </div>
 
                     {/* Progress bar */}
-                    <div style={{ display: "flex", alignItems: "center", gap: 8, minWidth: 110 }}>
+                    <div className="day-row-progress" style={{ display: "flex", alignItems: "center", gap: 8, minWidth: 110 }}>
                       <div style={{ flex: 1, height: 6, background: "#1e293b", borderRadius: 4, overflow: "hidden" }}>
                         <div style={{
                           width: `${(dDone / dTotal) * 100}%`, height: "100%",
@@ -557,7 +557,8 @@ export default function App() {
                     </div>
 
                     {/* Add Task Button */}
-                    <button
+                    <div className="day-row-actions">
+                      <button
                       onClick={(e) => {
                         e.stopPropagation();
                         setAddTaskDay(day);
@@ -617,6 +618,7 @@ export default function App() {
                     >
                       📚 Study Plan
                     </button>
+                    </div>
 
                     {/* Chevron */}
                     <div style={{ fontSize: 14, color: "#555", transform: isOpen ? "rotate(180deg)" : "none", transition: "transform 0.3s" }}>▼</div>
@@ -635,7 +637,7 @@ export default function App() {
                           const isCustom = entry.id.startsWith("custom-");
                           
                           return (
-                            <div key={entry.id} style={{
+                            <div key={entry.id} className="task-item" style={{
                               display: "flex", alignItems: "center", gap: 12,
                               background: isDone 
                                 ? "linear-gradient(135deg, rgba(16, 46, 16, 0.4), rgba(20, 60, 20, 0.2))" 
@@ -691,7 +693,7 @@ export default function App() {
                               }}>{entry.tag}</span>
 
                               {/* Topic */}
-                              <div style={{ flex: 1 }}>
+                              <div className="task-item-content" style={{ flex: 1 }}>
                                 <div style={{
                                   fontSize: 14, color: isDone ? "#666" : "#f1f5f9",
                                   textDecoration: isDone ? "line-through" : "none",
@@ -774,7 +776,7 @@ export default function App() {
                 const tyc = TYPE_CONFIG[entry.type];
                 const week = Math.ceil(entry.day / 7);
                 return (
-                  <div key={entry.id} style={{
+                  <div key={entry.id} className="list-view-row" style={{
                     display: "flex", alignItems: "center", gap: 10,
                     background: isDone ? "#0a1f0a" : "#0f172a",
                     border: `1px solid ${isDone ? "#2d5a2d" : "#1e293b"}`,
@@ -810,7 +812,7 @@ export default function App() {
                       background: tc.bg, color: "#fff", fontWeight: "bold", minWidth: 36, textAlign: "center",
                     }}>{entry.tag}</span>
 
-                    <div style={{ flex: 1, fontSize: 12, color: isDone ? "#555" : "#e2e8f0", textDecoration: isDone ? "line-through" : "none" }}>
+                    <div className="list-view-content" style={{ flex: 1, fontSize: 12, color: isDone ? "#555" : "#e2e8f0", textDecoration: isDone ? "line-through" : "none" }}>
                       {entry.topic}
                     </div>
 
