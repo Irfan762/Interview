@@ -108,6 +108,15 @@ input:focus-visible {
   transition-duration: 150ms;
 }
 
+/* Sticky Header for Desktop */
+@media (min-width: 769px) {
+  .main-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+}
+
 /* --- Mobile Responsiveness --- */
 @media (max-width: 768px) {
   /* Header */

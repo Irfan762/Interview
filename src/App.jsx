@@ -270,12 +270,11 @@ export default function App() {
       color: "#e0e0e0",
     }}>
       {/* Header */}
-      <div style={{
+      <div className="main-header" style={{
         background: "linear-gradient(135deg, rgba(26, 26, 46, 0.95), rgba(22, 33, 62, 0.95))",
         backdropFilter: "blur(10px)",
         borderBottom: "2px solid #FFD700",
         padding: "24px 32px 20px",
-        position: "sticky", top: 0, zIndex: 100,
         boxShadow: "0 8px 32px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,215,0,0.1)",
       }}>
         <div style={{ maxWidth: 1100, margin: "0 auto" }}>
