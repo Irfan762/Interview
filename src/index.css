@@ -1,188 +1,32 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
   margin: 0;
   font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background: #0f0c29;
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
+/* Animations */
+@keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes slideIn { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
 
-@keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateX(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
+/* Scrollbar */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.5); }
+::-webkit-scrollbar-thumb { background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 8px; }
+::selection { background: rgba(255, 215, 0, 0.3); color: #fff; }
 
-@keyframes pulse {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.5;
-  }
-}
+/* Focus */
+button:focus-visible, input:focus-visible { outline: 2px solid #FFD700; outline-offset: 2px; }
 
-@keyframes shimmer {
-  0% {
-    background-position: -1000px 0;
-  }
-  100% {
-    background-position: 1000px 0;
-  }
-}
+/* Sidebar Layout */
+.desktop-sidebar { display: block; }
+.mobile-menu-btn { display: none !important; }
 
-.fade-in {
-  animation: fadeIn 0.3s ease-in-out;
-}
-
-.slide-in {
-  animation: slideIn 0.4s ease-out;
-}
-
-.pulse {
-  animation: pulse 2s ease-in-out infinite;
-}
-
-/* Scrollbar styling */
-::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
-}
-
-::-webkit-scrollbar-track {
-  background: rgba(15, 23, 42, 0.5);
-  border-radius: 10px;
-}
-
-::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, #667eea, #764ba2);
-  border-radius: 10px;
-  border: 2px solid rgba(15, 23, 42, 0.5);
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(135deg, #764ba2, #f093fb);
-}
-
-/* Selection styling */
-::selection {
-  background: rgba(255, 215, 0, 0.3);
-  color: #fff;
-}
-
-::-moz-selection {
-  background: rgba(255, 215, 0, 0.3);
-  color: #fff;
-}
-
-/* Focus styles */
-button:focus-visible,
-input:focus-visible {
-  outline: 2px solid #FFD700;
-  outline-offset: 2px;
-}
-
-/* Smooth transitions */
-* {
-  transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow, transform;
-  transition-duration: 150ms;
-}
-
-/* Sticky Header for Desktop */
-@media (min-width: 769px) {
-  .main-header {
-    position: sticky;
-    top: 0;
-    z-index: 100;
-  }
-}
-
-/* --- Mobile Responsiveness --- */
+/* Mobile Responsive */
 @media (max-width: 768px) {
-  /* Header */
-  .header-content {
-    flex-direction: column !important;
-    align-items: flex-start !important;
-  }
-  .header-stats-container {
-    text-align: left !important;
-    width: 100%;
-    margin-top: 15px;
-  }
-  .header-progress-bar {
-    width: 100% !important;
-  }
-  
-  /* Filters */
-  .filters-container {
-    gap: 8px !important;
-  }
-  .filters-container button {
-    flex: 1 1 auto;
-    text-align: center;
-  }
-
-  /* Calendar Day Row */
-  .day-row-header {
-    flex-wrap: wrap !important;
-  }
-  .day-row-date {
-    width: 100%;
-    margin-top: 4px;
-    margin-bottom: 4px;
-  }
-  .day-row-progress {
-    flex: 1 1 100% !important;
-    margin-bottom: 8px;
-  }
-  .day-row-actions {
-    flex: 1 1 100% !important;
-    display: flex;
-    justify-content: flex-end;
-    gap: 8px;
-  }
-  
-  /* Task Item */
-  .task-item {
-    flex-wrap: wrap !important;
-  }
-  .task-item-content {
-    width: 100% !important;
-    margin-top: 8px;
-    margin-bottom: 8px;
-  }
-  .task-item-badges {
-    display: flex;
-    gap: 8px;
-  }
-
-  /* List View */
-  .list-view-row {
-    flex-wrap: wrap !important;
-  }
-  .list-view-content {
-    width: 100% !important;
-    margin-top: 8px;
-  }
+  .desktop-sidebar { display: none; }
+  .mobile-menu-btn { display: flex !important; }
 }
-

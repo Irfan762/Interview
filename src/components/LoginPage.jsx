@@ -1,414 +1,141 @@
-import { useState } from "react";
+import { useState } from 'react';
+import { useAuth } from '../context/AuthContext';
 
-export default function LoginPage({ onLogin }) {
-  const [isLogin, setIsLogin] = useState(true);
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    password: "",
-  });
-  const [error, setError] = useState("");
+const API = '/api';
+
+export default function LoginPage() {
+  const { login } = useAuth();
+  const [mode, setMode] = useState('login');
+  const [roleTab, setRoleTab] = useState('student');
+  const [form, setForm] = useState({ name: '', email: '', password: '', college: '', batch: '', branch: '' });
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
-    setLoading(true);
-
+    setLoading(true); setError('');
     try {
-      // Validate
-      if (!formData.email || !formData.password) {
-        throw new Error("Please fill in all fields");
-      }
-
-      if (!isLogin && !formData.name) {
-        throw new Error("Please enter your name");
-      }
-
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
-      // Store user data
-      const userData = {
-        name: formData.name || formData.email.split('@')[0],
-        email: formData.email,
-        loginTime: new Date().toISOString(),
-      };
-
-      localStorage.setItem("irfan147_user", JSON.stringify(userData));
-      onLogin(userData);
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
+      const endpoint = mode === 'login' ? '/auth/login' : '/auth/register';
+      const body = mode === 'login'
+        ? { email: form.email, password: form.password }
+        : { name: form.name, email: form.email, password: form.password, college: form.college, batch: form.batch, branch: form.branch, role: roleTab };
+      const res = await fetch(`${API}${endpoint}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed');
+      login(data.user, data.token);
+    } catch (err) { setError(err.message); }
+    finally { setLoading(false); }
   };
 
-  const handleChange = (e) => {
-    setFormData(prev => ({
-      ...prev,
-      [e.target.name]: e.target.value
-    }));
+  const demoLogin = (role) => {
+    const demos = {
+      student: { id: 'demo_student', name: 'Demo Student', email: 'demo@student.com', role: 'student', college: 'RSCOE Pune', batch: '2027' },
+      admin: { id: 'demo_admin', name: 'Admin User', email: 'admin@cracki.com', role: 'admin', college: 'System', batch: '' },
+    };
+    login(demos[role], 'demo_token');
   };
 
   return (
     <div style={{
-      minHeight: "100vh",
-      background: "linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%)",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      padding: "20px",
-      fontFamily: "'Inter', 'Segoe UI', system-ui, sans-serif",
+      minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center',
+      background: 'linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%)',
+      fontFamily: "'Inter', system-ui, sans-serif", padding: 20,
     }}>
-      {/* Background Decoration */}
       <div style={{
-        position: "absolute",
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        overflow: "hidden",
-        opacity: 0.1,
+        width: '100%', maxWidth: 460, background: 'rgba(26,26,46,0.95)', backdropFilter: 'blur(20px)',
+        border: '1px solid rgba(255,215,0,0.2)', borderRadius: 24, padding: '40px 36px',
+        boxShadow: '0 32px 80px rgba(0,0,0,0.6)',
       }}>
-        <div style={{
-          position: "absolute",
-          top: "10%",
-          left: "10%",
-          width: "300px",
-          height: "300px",
-          background: "radial-gradient(circle, #FFD700, transparent)",
-          borderRadius: "50%",
-          filter: "blur(80px)",
-        }} />
-        <div style={{
-          position: "absolute",
-          bottom: "10%",
-          right: "10%",
-          width: "400px",
-          height: "400px",
-          background: "radial-gradient(circle, #667eea, transparent)",
-          borderRadius: "50%",
-          filter: "blur(100px)",
-        }} />
-      </div>
-
-      {/* Login Card */}
-      <div style={{
-        background: "linear-gradient(135deg, rgba(26, 26, 46, 0.95), rgba(22, 33, 62, 0.95))",
-        backdropFilter: "blur(20px)",
-        borderRadius: 24,
-        padding: "48px 40px",
-        maxWidth: 440,
-        width: "100%",
-        border: "2px solid rgba(255, 215, 0, 0.3)",
-        boxShadow: "0 20px 60px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 215, 0, 0.1)",
-        position: "relative",
-        zIndex: 1,
-      }}>
-        {/* Logo & Title */}
-        <div style={{ textAlign: "center", marginBottom: 40 }}>
-          <div style={{
-            width: 80,
-            height: 80,
-            margin: "0 auto 20px",
-            background: "linear-gradient(135deg, #FFD700, #FFA500)",
-            borderRadius: "50%",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            fontSize: 40,
-            boxShadow: "0 8px 24px rgba(255, 215, 0, 0.4)",
-          }}>
-            🧠
-          </div>
-          <h1 style={{
-            margin: 0,
-            fontSize: 32,
-            fontWeight: "800",
-            background: "linear-gradient(135deg, #FFD700, #FFA500)",
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-            backgroundClip: "text",
-            marginBottom: 8,
-          }}>
-            1-4-7 Tracker
-          </h1>
-          <p style={{
-            margin: 0,
-            fontSize: 14,
-            color: "#aaa",
-          }}>
-            Your SDE Placement Prep Companion
-          </p>
+        {/* Logo */}
+        <div style={{ textAlign: 'center', marginBottom: 28 }}>
+          <div style={{ fontSize: 40, marginBottom: 8 }}>⚡</div>
+          <div style={{ fontSize: 26, fontWeight: 900, background: 'linear-gradient(135deg, #FFD700, #FFA500)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>CracKInterview</div>
+          <div style={{ color: '#64748b', fontSize: 13, marginTop: 4 }}>Campus Placement Ecosystem</div>
         </div>
 
-        {/* Toggle Login/Signup */}
-        <div style={{
-          display: "flex",
-          gap: 8,
-          marginBottom: 32,
-          background: "rgba(255, 255, 255, 0.05)",
-          padding: 4,
-          borderRadius: 12,
-        }}>
-          <button
-            type="button"
-            onClick={() => setIsLogin(true)}
-            style={{
-              flex: 1,
-              padding: "10px",
-              fontSize: 14,
-              fontWeight: "600",
-              background: isLogin ? "linear-gradient(135deg, #FFD700, #FFA500)" : "transparent",
-              color: isLogin ? "#000" : "#aaa",
-              border: "none",
-              borderRadius: 10,
-              cursor: "pointer",
-              transition: "all 0.3s",
-            }}
-          >
-            Login
-          </button>
-          <button
-            type="button"
-            onClick={() => setIsLogin(false)}
-            style={{
-              flex: 1,
-              padding: "10px",
-              fontSize: 14,
-              fontWeight: "600",
-              background: !isLogin ? "linear-gradient(135deg, #FFD700, #FFA500)" : "transparent",
-              color: !isLogin ? "#000" : "#aaa",
-              border: "none",
-              borderRadius: 10,
-              cursor: "pointer",
-              transition: "all 0.3s",
-            }}
-          >
-            Sign Up
-          </button>
-        </div>
-
-        {/* Form */}
-        <form onSubmit={handleSubmit}>
-          {/* Name Field (Signup only) */}
-          {!isLogin && (
-            <div style={{ marginBottom: 20 }}>
-              <label style={{
-                display: "block",
-                marginBottom: 8,
-                fontSize: 13,
-                fontWeight: "600",
-                color: "#FFD700",
+        {/* Role Selection */}
+        <div style={{ marginBottom: 20 }}>
+          <div style={{ fontSize: 11, color: '#94a3b8', fontWeight: 600, marginBottom: 8, textAlign: 'center' }}>LOGIN AS</div>
+          <div style={{ display: 'flex', gap: 10 }}>
+            {[
+              { key: 'student', icon: '🎓', label: 'Student', desc: 'Track prep & find jobs' },
+              { key: 'admin', icon: '🛡️', label: 'Admin', desc: 'Manage platform' },
+            ].map(r => (
+              <button key={r.key} onClick={() => setRoleTab(r.key)} style={{
+                flex: 1, padding: '14px 12px', borderRadius: 14, cursor: 'pointer', textAlign: 'center',
+                background: roleTab === r.key ? 'linear-gradient(135deg, rgba(255,215,0,0.12), rgba(255,165,0,0.06))' : 'rgba(0,0,0,0.2)',
+                border: roleTab === r.key ? '2px solid rgba(255,215,0,0.4)' : '2px solid rgba(255,255,255,0.06)',
+                transition: 'all 0.3s',
               }}>
-                Full Name
-              </label>
-              <input
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                placeholder="Irfan Tamboli"
-                required={!isLogin}
-                style={{
-                  width: "100%",
-                  padding: "14px 16px",
-                  fontSize: 14,
-                  background: "rgba(255, 255, 255, 0.05)",
-                  border: "2px solid rgba(255, 255, 255, 0.1)",
-                  borderRadius: 12,
-                  color: "#fff",
-                  outline: "none",
-                  transition: "all 0.3s",
-                }}
-                onFocus={(e) => e.target.style.borderColor = "#FFD700"}
-                onBlur={(e) => e.target.style.borderColor = "rgba(255, 255, 255, 0.1)"}
-              />
-            </div>
-          )}
-
-          {/* Email Field */}
-          <div style={{ marginBottom: 20 }}>
-            <label style={{
-              display: "block",
-              marginBottom: 8,
-              fontSize: 13,
-              fontWeight: "600",
-              color: "#FFD700",
-            }}>
-              Email Address
-            </label>
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              placeholder="irfan@example.com"
-              required
-              style={{
-                width: "100%",
-                padding: "14px 16px",
-                fontSize: 14,
-                background: "rgba(255, 255, 255, 0.05)",
-                border: "2px solid rgba(255, 255, 255, 0.1)",
-                borderRadius: 12,
-                color: "#fff",
-                outline: "none",
-                transition: "all 0.3s",
-              }}
-              onFocus={(e) => e.target.style.borderColor = "#FFD700"}
-              onBlur={(e) => e.target.style.borderColor = "rgba(255, 255, 255, 0.1)"}
-            />
+                <div style={{ fontSize: 24, marginBottom: 4 }}>{r.icon}</div>
+                <div style={{ fontSize: 14, fontWeight: 700, color: roleTab === r.key ? '#FFD700' : '#94a3b8' }}>{r.label}</div>
+                <div style={{ fontSize: 10, color: '#64748b', marginTop: 2 }}>{r.desc}</div>
+              </button>
+            ))}
           </div>
+        </div>
 
-          {/* Password Field */}
-          <div style={{ marginBottom: 24 }}>
-            <label style={{
-              display: "block",
-              marginBottom: 8,
-              fontSize: 13,
-              fontWeight: "600",
-              color: "#FFD700",
-            }}>
-              Password
-            </label>
-            <input
-              type="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              placeholder="••••••••"
-              required
-              style={{
-                width: "100%",
-                padding: "14px 16px",
-                fontSize: 14,
-                background: "rgba(255, 255, 255, 0.05)",
-                border: "2px solid rgba(255, 255, 255, 0.1)",
-                borderRadius: 12,
-                color: "#fff",
-                outline: "none",
-                transition: "all 0.3s",
-              }}
-              onFocus={(e) => e.target.style.borderColor = "#FFD700"}
-              onBlur={(e) => e.target.style.borderColor = "rgba(255, 255, 255, 0.1)"}
-            />
-          </div>
+        {/* Login / Register Toggle */}
+        <div style={{ display: 'flex', background: 'rgba(0,0,0,0.3)', borderRadius: 12, padding: 4, marginBottom: 24 }}>
+          {['login', 'register'].map(m => (
+            <button key={m} onClick={() => { setMode(m); setError(''); }} style={{
+              flex: 1, padding: '10px 0', border: 'none', borderRadius: 10, cursor: 'pointer',
+              background: mode === m ? 'linear-gradient(135deg, #FFD700, #FFA500)' : 'transparent',
+              color: mode === m ? '#000' : '#888', fontWeight: mode === m ? 700 : 400, fontSize: 14,
+            }}>{m === 'login' ? 'Login' : 'Sign Up'}</button>
+          ))}
+        </div>
 
-          {/* Error Message */}
-          {error && (
-            <div style={{
-              padding: "12px 16px",
-              marginBottom: 20,
-              background: "rgba(244, 67, 54, 0.1)",
-              border: "1px solid rgba(244, 67, 54, 0.3)",
-              borderRadius: 10,
-              color: "#f44336",
-              fontSize: 13,
-            }}>
-              ⚠️ {error}
-            </div>
+        <form onSubmit={handleSubmit}>
+          {mode === 'register' && (
+            <>
+              <Inp label="Full Name" value={form.name} onChange={v => set('name', v)} placeholder="Irfan Khan" />
+              {roleTab === 'student' && (
+                <>
+                  <Inp label="College" value={form.college} onChange={v => set('college', v)} placeholder="RSCOE Pune" />
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                    <Inp label="Batch" value={form.batch} onChange={v => set('batch', v)} placeholder="2027" />
+                    <Inp label="Branch" value={form.branch} onChange={v => set('branch', v)} placeholder="Computer Engg" />
+                  </div>
+                </>
+              )}
+            </>
           )}
+          <Inp label="Email" type="email" value={form.email} onChange={v => set('email', v)} placeholder={roleTab === 'admin' ? 'admin@cracki.com' : 'you@college.edu'} />
+          <Inp label="Password" type="password" value={form.password} onChange={v => set('password', v)} placeholder="••••••••" />
 
-          {/* Submit Button */}
-          <button
-            type="submit"
-            disabled={loading}
-            style={{
-              width: "100%",
-              padding: "14px",
-              fontSize: 16,
-              fontWeight: "bold",
-              background: loading ? "#555" : "linear-gradient(135deg, #FFD700, #FFA500)",
-              color: loading ? "#999" : "#000",
-              border: "none",
-              borderRadius: 12,
-              cursor: loading ? "not-allowed" : "pointer",
-              boxShadow: loading ? "none" : "0 4px 16px rgba(255, 215, 0, 0.4)",
-              transition: "all 0.3s",
-              transform: loading ? "scale(0.98)" : "scale(1)",
-            }}
-            onMouseEnter={(e) => {
-              if (!loading) {
-                e.currentTarget.style.transform = "scale(1.02)";
-                e.currentTarget.style.boxShadow = "0 6px 20px rgba(255, 215, 0, 0.5)";
-              }
-            }}
-            onMouseLeave={(e) => {
-              if (!loading) {
-                e.currentTarget.style.transform = "scale(1)";
-                e.currentTarget.style.boxShadow = "0 4px 16px rgba(255, 215, 0, 0.4)";
-              }
-            }}
-          >
-            {loading ? "⏳ Please wait..." : isLogin ? "🚀 Login" : "✨ Create Account"}
-          </button>
+          {error && <div style={{ background: 'rgba(244,67,54,0.1)', border: '1px solid rgba(244,67,54,0.3)', color: '#f44336', borderRadius: 10, padding: '10px 14px', fontSize: 13, marginBottom: 16 }}>{error}</div>}
+
+          <button type="submit" disabled={loading} style={{
+            width: '100%', padding: '14px 0', marginTop: 4, border: 'none', borderRadius: 12,
+            cursor: loading ? 'not-allowed' : 'pointer',
+            background: loading ? 'rgba(255,215,0,0.3)' : 'linear-gradient(135deg, #FFD700, #FFA500)',
+            color: '#000', fontWeight: 700, fontSize: 16, boxShadow: '0 8px 24px rgba(255,215,0,0.3)',
+          }}>{loading ? '⏳ Please wait...' : mode === 'login' ? `🚀 Login as ${roleTab === 'admin' ? 'Admin' : 'Student'}` : '✨ Create Account'}</button>
         </form>
 
-        {/* Footer */}
-        <div style={{
-          marginTop: 32,
-          paddingTop: 24,
-          borderTop: "1px solid rgba(255, 255, 255, 0.1)",
-          textAlign: "center",
-        }}>
-          <p style={{
-            margin: 0,
-            fontSize: 12,
-            color: "#666",
-          }}>
-            {isLogin ? "Don't have an account? " : "Already have an account? "}
-            <button
-              type="button"
-              onClick={() => setIsLogin(!isLogin)}
-              style={{
-                background: "none",
-                border: "none",
-                color: "#FFD700",
-                cursor: "pointer",
-                fontSize: 12,
-                fontWeight: "600",
-                textDecoration: "underline",
-              }}
-            >
-              {isLogin ? "Sign Up" : "Login"}
-            </button>
-          </p>
+        {/* Quick Demo Buttons */}
+        <div style={{ marginTop: 20, display: 'flex', gap: 10 }}>
+          <button onClick={() => demoLogin('student')} style={demoBtn}>🎓 Demo Student</button>
+          <button onClick={() => demoLogin('admin')} style={demoBtn}>🛡️ Demo Admin</button>
         </div>
-
-        {/* Demo Credentials */}
-        <div style={{
-          marginTop: 20,
-          padding: "12px 16px",
-          background: "rgba(102, 126, 234, 0.1)",
-          border: "1px solid rgba(102, 126, 234, 0.3)",
-          borderRadius: 10,
-        }}>
-          <p style={{
-            margin: 0,
-            fontSize: 11,
-            color: "#aaa",
-            textAlign: "center",
-          }}>
-            💡 <strong style={{ color: "#667eea" }}>Demo:</strong> Use any email & password to login
-          </p>
-        </div>
-      </div>
-
-      {/* Bottom Text */}
-      <div style={{
-        position: "absolute",
-        bottom: 20,
-        left: 0,
-        right: 0,
-        textAlign: "center",
-        color: "#666",
-        fontSize: 12,
-        zIndex: 1,
-      }}>
-        Built for <strong style={{ color: "#FFD700" }}>Irfan Tamboli</strong> • IIT KGP Winner 🏆
       </div>
     </div>
   );
 }
+
+function Inp({ label, type = 'text', value, onChange, placeholder }) {
+  return (
+    <div style={{ marginBottom: 16 }}>
+      <label style={{ display: 'block', color: '#94a3b8', fontSize: 12, fontWeight: 600, marginBottom: 6 }}>{label}</label>
+      <input type={type} value={value} onChange={e => onChange(e.target.value)} placeholder={placeholder}
+        style={{ width: '100%', padding: '12px 14px', background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10, color: '#f1f5f9', fontSize: 14, outline: 'none', boxSizing: 'border-box' }}
+        onFocus={e => e.target.style.borderColor = 'rgba(255,215,0,0.5)'}
+        onBlur={e => e.target.style.borderColor = 'rgba(255,255,255,0.1)'} />
+    </div>
+  );
+}
+
+const demoBtn = { flex: 1, padding: '10px 0', background: 'transparent', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10, color: '#94a3b8', cursor: 'pointer', fontSize: 12, fontWeight: 600, transition: 'all 0.2s' };
