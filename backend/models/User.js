@@ -13,6 +13,7 @@ const userSchema = new mongoose.Schema({
   github: { type: String, default: '' },
   skills: [{ type: String }],
   avatar: { type: String, default: '' },
+  subscription: { type: String, enum: ['none', 'basic', 'premium'], default: 'none' },
   lastLogin: { type: Date },
 }, { timestamps: true });
 

@@ -62,7 +62,9 @@ export default function JobsPage() {
           <div style={{ fontSize: 24, fontWeight: 800, color: '#f1f5f9' }}>💼 Job Board</div>
           <div style={{ fontSize: 13, color: '#64748b', marginTop: 4 }}>Campus & off-campus opportunities</div>
         </div>
-        <button onClick={() => setShowCreate(true)} style={btnGold}>➕ Post Job</button>
+        {user?.role === 'admin' && (
+          <button onClick={() => setShowCreate(true)} style={btnGold}>➕ Post Job</button>
+        )}
       </div>
 
       {/* Tabs */}

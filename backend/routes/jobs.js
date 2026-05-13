@@ -1,14 +1,14 @@
 import express from 'express';
 import Job from '../models/Job.js';
-import { authMiddleware, optionalAuth } from '../middleware/auth.js';
+import { authMiddleware, optionalAuth, adminMiddleware } from '../middleware/auth.js';
 
 const router = express.Router();
 
 // Get all jobs
 router.get('/', optionalAuth, async (req, res) => {
   try {
-    const { type, search, batch, remote } = req.query;
-    let query = { isApproved: true };
+    const { type, search, batch, remote, approved } = req.query;
+    let query = { isApproved: approved === 'false' ? false : true };
     if (type && type !== 'all') query.type = type;
     if (batch) query.batchEligibility = { $in: [batch] };
     if (remote === 'true') query.location = /remote/i;
@@ -19,7 +19,7 @@ router.get('/', optionalAuth, async (req, res) => {
 });
 
 // Post a job
-router.post('/', authMiddleware, async (req, res) => {
+router.post('/', authMiddleware, adminMiddleware, async (req, res) => {
   try {
     const job = await Job.create({ ...req.body, postedBy: req.user.id });
     res.json(job);
@@ -64,6 +64,15 @@ router.get('/user/saved', authMiddleware, async (req, res) => {
   try {
     const jobs = await Job.find({ savedBy: req.user.id }).sort({ createdAt: -1 });
     res.json(jobs);
+  } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+// Admin: approve a job
+router.post('/:id/approve', authMiddleware, adminMiddleware, async (req, res) => {
+  try {
+    const job = await Job.findByIdAndUpdate(req.params.id, { isApproved: true }, { new: true });
+    if (!job) return res.status(404).json({ error: 'Job not found' });
+    res.json({ success: true, job });
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 

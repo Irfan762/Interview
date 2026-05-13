@@ -10,11 +10,14 @@ import CommunityPage from './pages/CommunityPage';
 import JobsPage from './pages/JobsPage';
 import AlumniPage from './pages/AlumniPage';
 import AIAnalyzerPage from './pages/AIAnalyzerPage';
+import SubscriptionPage from './pages/SubscriptionPage';
+import { IconMenu } from './components/Icons';
 
 function AppRoutes() {
   const { isLoggedIn, user } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const isAdmin = user?.role === 'admin';
+  const sub = user?.subscription || 'none';
 
   if (!isLoggedIn) return <LoginPage />;
 
@@ -36,7 +39,9 @@ function AppRoutes() {
         color: '#FFD700', fontSize: 20, cursor: 'pointer',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         boxShadow: '0 4px 16px rgba(0,0,0,0.4)',
-      }}>☰</button>
+      }}>
+        <IconMenu />
+      </button>
 
       {sidebarOpen && (
         <div style={{ position: 'fixed', inset: 0, zIndex: 999, background: 'rgba(0,0,0,0.6)' }} onClick={() => setSidebarOpen(false)}>
@@ -49,11 +54,25 @@ function AppRoutes() {
       <div style={{ flex: 1, overflowY: 'auto', minHeight: '100vh' }}>
         <Routes>
           <Route path="/" element={isAdmin ? <AdminDashboard /> : <Dashboard />} />
-          <Route path="/tracker" element={<TrackerPage />} />
-          <Route path="/community" element={<CommunityPage />} />
+          <Route path="/subscription" element={<SubscriptionPage />} />
           <Route path="/jobs" element={<JobsPage />} />
-          <Route path="/alumni" element={<AlumniPage />} />
-          <Route path="/ai-analyzer" element={<AIAnalyzerPage />} />
+          
+          {/* Locked Core Prep (₹50) */}
+          <Route path="/tracker" element={
+            (isAdmin || sub !== 'none') ? <TrackerPage /> : <Navigate to="/subscription" replace />
+          } />
+          <Route path="/community" element={
+            (isAdmin || sub !== 'none') ? <CommunityPage /> : <Navigate to="/subscription" replace />
+          } />
+          <Route path="/ai-analyzer" element={
+            (isAdmin || sub !== 'none') ? <AIAnalyzerPage /> : <Navigate to="/subscription" replace />
+          } />
+          
+          {/* Locked Networking (₹100) */}
+          <Route path="/alumni" element={
+            (isAdmin || sub === 'premium') ? <AlumniPage /> : <Navigate to="/subscription" replace />
+          } />
+          
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </div>

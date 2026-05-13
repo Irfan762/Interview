@@ -1,5 +1,9 @@
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { 
+  IconLightning, IconAlumni as IconStudent, IconShield as IconAdmin, 
+  IconRocket, IconShield 
+} from './Icons';
 
 const API = '/api';
 
@@ -31,7 +35,7 @@ export default function LoginPage() {
 
   const demoLogin = (role) => {
     const demos = {
-      student: { id: 'demo_student', name: 'Demo Student', email: 'demo@student.com', role: 'student', college: 'RSCOE Pune', batch: '2027' },
+      student: { id: 'demo_student', name: 'Demo Student', email: 'demo@student.com', role: 'student', college: 'RSCOE Pune', batch: '2027', subscription: 'premium' },
       admin: { id: 'demo_admin', name: 'Admin User', email: 'admin@cracki.com', role: 'admin', college: 'System', batch: '' },
     };
     login(demos[role], 'demo_token');
@@ -50,28 +54,32 @@ export default function LoginPage() {
       }}>
         {/* Logo */}
         <div style={{ textAlign: 'center', marginBottom: 28 }}>
-          <div style={{ fontSize: 40, marginBottom: 8 }}>⚡</div>
-          <div style={{ fontSize: 26, fontWeight: 900, background: 'linear-gradient(135deg, #FFD700, #FFA500)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>CracKInterview</div>
+          <div style={{ color: '#FFD700', display: 'flex', justifyContent: 'center', marginBottom: 12 }}>
+            <IconLightning size={48} />
+          </div>
+          <div style={{ fontSize: 28, fontWeight: 900, background: 'linear-gradient(135deg, #FFD700, #FFA500)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>CracKInterview</div>
           <div style={{ color: '#64748b', fontSize: 13, marginTop: 4 }}>Campus Placement Ecosystem</div>
         </div>
 
         {/* Role Selection */}
         <div style={{ marginBottom: 20 }}>
-          <div style={{ fontSize: 11, color: '#94a3b8', fontWeight: 600, marginBottom: 8, textAlign: 'center' }}>LOGIN AS</div>
+          <div style={{ fontSize: 11, color: '#94a3b8', fontWeight: 600, marginBottom: 12, textAlign: 'center', letterSpacing: 1 }}>LOGIN AS</div>
           <div style={{ display: 'flex', gap: 10 }}>
             {[
-              { key: 'student', icon: '🎓', label: 'Student', desc: 'Track prep & find jobs' },
-              { key: 'admin', icon: '🛡️', label: 'Admin', desc: 'Manage platform' },
+              { key: 'student', Icon: IconStudent, label: 'Student', desc: 'Track prep & find jobs' },
+              { key: 'admin', Icon: IconAdmin, label: 'Admin', desc: 'Manage platform' },
             ].map(r => (
               <button key={r.key} onClick={() => setRoleTab(r.key)} style={{
-                flex: 1, padding: '14px 12px', borderRadius: 14, cursor: 'pointer', textAlign: 'center',
+                flex: 1, padding: '16px 12px', borderRadius: 14, cursor: 'pointer', textAlign: 'center',
                 background: roleTab === r.key ? 'linear-gradient(135deg, rgba(255,215,0,0.12), rgba(255,165,0,0.06))' : 'rgba(0,0,0,0.2)',
                 border: roleTab === r.key ? '2px solid rgba(255,215,0,0.4)' : '2px solid rgba(255,255,255,0.06)',
                 transition: 'all 0.3s',
               }}>
-                <div style={{ fontSize: 24, marginBottom: 4 }}>{r.icon}</div>
+                <div style={{ color: roleTab === r.key ? '#FFD700' : '#64748b', marginBottom: 8, display: 'flex', justifyContent: 'center' }}>
+                  <r.Icon size={32} />
+                </div>
                 <div style={{ fontSize: 14, fontWeight: 700, color: roleTab === r.key ? '#FFD700' : '#94a3b8' }}>{r.label}</div>
-                <div style={{ fontSize: 10, color: '#64748b', marginTop: 2 }}>{r.desc}</div>
+                <div style={{ fontSize: 10, color: '#64748b', marginTop: 4 }}>{r.desc}</div>
               </button>
             ))}
           </div>
@@ -84,6 +92,7 @@ export default function LoginPage() {
               flex: 1, padding: '10px 0', border: 'none', borderRadius: 10, cursor: 'pointer',
               background: mode === m ? 'linear-gradient(135deg, #FFD700, #FFA500)' : 'transparent',
               color: mode === m ? '#000' : '#888', fontWeight: mode === m ? 700 : 400, fontSize: 14,
+              transition: 'all 0.2s'
             }}>{m === 'login' ? 'Login' : 'Sign Up'}</button>
           ))}
         </div>
@@ -113,13 +122,29 @@ export default function LoginPage() {
             cursor: loading ? 'not-allowed' : 'pointer',
             background: loading ? 'rgba(255,215,0,0.3)' : 'linear-gradient(135deg, #FFD700, #FFA500)',
             color: '#000', fontWeight: 700, fontSize: 16, boxShadow: '0 8px 24px rgba(255,215,0,0.3)',
-          }}>{loading ? '⏳ Please wait...' : mode === 'login' ? `🚀 Login as ${roleTab === 'admin' ? 'Admin' : 'Student'}` : '✨ Create Account'}</button>
+            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8
+          }}>
+            {loading ? 'Please wait...' : (
+              <>
+                <IconRocket size={20} />
+                {mode === 'login' ? `Login as ${roleTab === 'admin' ? 'Admin' : 'Student'}` : 'Create Account'}
+              </>
+            )}
+          </button>
         </form>
 
         {/* Quick Demo Buttons */}
-        <div style={{ marginTop: 20, display: 'flex', gap: 10 }}>
-          <button onClick={() => demoLogin('student')} style={demoBtn}>🎓 Demo Student</button>
-          <button onClick={() => demoLogin('admin')} style={demoBtn}>🛡️ Demo Admin</button>
+        <div style={{ marginTop: 24, display: 'flex', gap: 10 }}>
+          <button onClick={() => demoLogin('student')} style={demoBtn}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+              <IconStudent size={14} /> Demo Student
+            </div>
+          </button>
+          <button onClick={() => demoLogin('admin')} style={demoBtn}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+              <IconAdmin size={14} /> Demo Admin
+            </div>
+          </button>
         </div>
       </div>
     </div>
@@ -138,4 +163,4 @@ function Inp({ label, type = 'text', value, onChange, placeholder }) {
   );
 }
 
-const demoBtn = { flex: 1, padding: '10px 0', background: 'transparent', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10, color: '#94a3b8', cursor: 'pointer', fontSize: 12, fontWeight: 600, transition: 'all 0.2s' };
+const demoBtn = { flex: 1, padding: '12px 0', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 10, color: '#94a3b8', cursor: 'pointer', fontSize: 12, fontWeight: 600, transition: 'all-0.2s' };

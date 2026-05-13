@@ -47,7 +47,9 @@ export default function AlumniPage() {
           <div style={{ fontSize: 24, fontWeight: 800, color: '#f1f5f9' }}>🎓 Alumni Network</div>
           <div style={{ fontSize: 13, color: '#64748b', marginTop: 4 }}>Connect with alumni & get referrals</div>
         </div>
-        <button onClick={() => setShowAdd(true)} style={btnGold}>➕ Add Alumni</button>
+        {user?.role === 'admin' && (
+          <button onClick={() => setShowAdd(true)} style={btnGold}>➕ Add Alumni</button>
+        )}
       </div>
 
       {/* Top Companies Bar */}

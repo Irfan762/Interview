@@ -86,7 +86,9 @@ export default function CommunityPage() {
             <div style={{ fontSize: 24, fontWeight: 800, color: '#f1f5f9' }}>💬 Communities</div>
             <div style={{ fontSize: 13, color: '#64748b', marginTop: 4 }}>Join college groups & placement discussions</div>
           </div>
-          <button onClick={() => setShowCreate(true)} style={btnGold}>➕ Create Community</button>
+          {user?.role === 'admin' && (
+            <button onClick={() => setShowCreate(true)} style={btnGold}>➕ Create Community</button>
+          )}
         </div>
 
         {/* Create modal */}

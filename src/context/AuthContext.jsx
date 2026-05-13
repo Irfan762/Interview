@@ -15,6 +15,12 @@ export function AuthProvider({ children }) {
     localStorage.setItem('ci_token', authToken);
   };
 
+  const updateUser = (newData) => {
+    const updated = { ...user, ...newData };
+    setUser(updated);
+    localStorage.setItem('ci_user', JSON.stringify(updated));
+  };
+
   const logout = () => {
     setUser(null);
     setToken(null);
@@ -34,7 +40,7 @@ export function AuthProvider({ children }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, login, logout, authFetch, isLoggedIn: !!user }}>
+    <AuthContext.Provider value={{ user, token, login, logout, updateUser, authFetch, isLoggedIn: !!user }}>
       {children}
     </AuthContext.Provider>
   );

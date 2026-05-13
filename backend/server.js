@@ -24,20 +24,42 @@ app.use(cors());
 app.use(express.json({ limit: '5mb' }));
 
 // MongoDB
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/irfan_tracker';
-mongoose.connect(MONGODB_URI)
-  .then(() => console.log('✅ MongoDB connected'))
-  .catch((err) => console.error('❌ MongoDB error:', err.message));
+const connectDB = async () => {
+  const options = {
+    serverSelectionTimeoutMS: 5000,
+    socketTimeoutMS: 45000,
+  };
+  
+  try {
+    await mongoose.connect(process.env.MONGODB_URI, options);
+    console.log('✅ MongoDB Atlas connected');
+  } catch (err) {
+    console.log('⚠️ Atlas connection failed. Trying local MongoDB...');
+    try {
+      await mongoose.connect('mongodb://localhost:27017/irfan_tracker', options);
+      console.log('✅ Local MongoDB connected');
+    } catch (localErr) {
+      console.error('❌ Database Offline: App running in Demo Mode');
+      console.log('💡 Note: Data will not persist and some features might be limited.');
+    }
+  }
+};
+connectDB();
 
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/tracker', trackerRoutes);
+
+app.get('/api/health', (req, res) => res.json({ 
+  status: 'ok', 
+  database: mongoose.connection.readyState === 1 ? 'connected' : 'offline',
+  mode: mongoose.connection.readyState === 1 ? 'production' : 'demo'
+}));
 app.use('/api/community', communityRoutes);
 app.use('/api/jobs', jobRoutes);
 app.use('/api/alumni', alumniRoutes);
 app.use('/api/ai', aiRoutes);
 
-app.get('/api/health', (req, res) => res.json({ status: 'ok', message: 'CracKInterview backend running' }));
 
 // Production static files
 if (process.env.NODE_ENV === 'production') {

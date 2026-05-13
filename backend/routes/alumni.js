@@ -1,6 +1,6 @@
 import express from 'express';
 import Alumni from '../models/Alumni.js';
-import { authMiddleware, optionalAuth } from '../middleware/auth.js';
+import { authMiddleware, optionalAuth, adminMiddleware } from '../middleware/auth.js';
 
 const router = express.Router();
 
@@ -20,7 +20,7 @@ router.get('/', optionalAuth, async (req, res) => {
 });
 
 // Add alumni profile
-router.post('/', authMiddleware, async (req, res) => {
+router.post('/', authMiddleware, adminMiddleware, async (req, res) => {
   try {
     const alumnus = await Alumni.create({ ...req.body, user: req.user.id });
     res.json(alumnus);

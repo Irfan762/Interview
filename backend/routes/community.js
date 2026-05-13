@@ -2,7 +2,7 @@ import express from 'express';
 import Community from '../models/Community.js';
 import CommunityPost from '../models/CommunityPost.js';
 import Comment from '../models/Comment.js';
-import { authMiddleware, optionalAuth } from '../middleware/auth.js';
+import { authMiddleware, optionalAuth, adminMiddleware } from '../middleware/auth.js';
 
 const router = express.Router();
 
@@ -18,8 +18,25 @@ router.get('/', optionalAuth, async (req, res) => {
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
+// Admin: Get all pending posts across all communities
+router.get('/posts/pending', authMiddleware, adminMiddleware, async (req, res) => {
+  try {
+    const posts = await CommunityPost.find({ isApproved: false }).populate('author', 'name college batch').sort({ createdAt: -1 });
+    res.json(posts);
+  } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+// Admin: Approve a post
+router.post('/posts/:postId/approve', authMiddleware, adminMiddleware, async (req, res) => {
+  try {
+    const post = await CommunityPost.findByIdAndUpdate(req.params.postId, { isApproved: true }, { new: true });
+    if (!post) return res.status(404).json({ error: 'Post not found' });
+    res.json({ success: true, post });
+  } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
 // Create community
-router.post('/', authMiddleware, async (req, res) => {
+router.post('/', authMiddleware, adminMiddleware, async (req, res) => {
   try {
     const { name, description, college, category, tags } = req.body;
     const community = await Community.create({ name, description, college, category, tags, createdBy: req.user.id, members: [req.user.id], memberCount: 1 });
@@ -50,6 +67,12 @@ router.get('/:id/posts', optionalAuth, async (req, res) => {
   try {
     const { company, type } = req.query;
     let query = { community: req.params.id };
+    
+    // Students only see approved posts. Admins see everything.
+    if (req.user?.role !== 'admin') {
+      query.isApproved = true;
+    }
+
     if (company) query.company = new RegExp(company, 'i');
     if (type && type !== 'all') query.type = type;
     const posts = await CommunityPost.find(query).populate('author', 'name college batch').sort({ isPinned: -1, createdAt: -1 }).limit(50);
@@ -61,7 +84,22 @@ router.get('/:id/posts', optionalAuth, async (req, res) => {
 router.post('/:id/posts', authMiddleware, async (req, res) => {
   try {
     const { title, description, type, company, role, package: pkg, hiringDate, eligibility, tags } = req.body;
-    const post = await CommunityPost.create({ community: req.params.id, author: req.user.id, title, description, type, company, role, package: pkg, hiringDate, eligibility, tags });
+    // Admins' posts are auto-approved. Students' posts need approval.
+    const isApproved = req.user.role === 'admin';
+    const post = await CommunityPost.create({ 
+      community: req.params.id, 
+      author: req.user.id, 
+      title, 
+      description, 
+      type, 
+      company, 
+      role, 
+      package: pkg, 
+      hiringDate, 
+      eligibility, 
+      tags,
+      isApproved 
+    });
     const populated = await post.populate('author', 'name college batch');
     res.json(populated);
   } catch (err) { res.status(500).json({ error: err.message }); }

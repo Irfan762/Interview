@@ -21,6 +21,7 @@ const postSchema = new mongoose.Schema({
   commentCount: { type: Number, default: 0 },
   savedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
   isPinned: { type: Boolean, default: false },
+  isApproved: { type: Boolean, default: true },
 }, { timestamps: true });
 
 postSchema.index({ company: 'text', title: 'text', tags: 'text' });
